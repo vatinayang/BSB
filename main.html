@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bon Voyage！第戎倒數小手帳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFF8EC; --ink:#3B3355; --soft:#7A7194;
+    --blue:#A8C8F0; --pink:#F7B5C4; --mustard:#F6D776; --mint:#BFE6CF; --card:#FFFDF8;
+    --wobble:255px 15px 225px 15px / 15px 225px 15px 255px;
+    --wobble2:15px 255px 15px 225px / 225px 15px 255px 15px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'LXGW WenKai TC','Patrick Hand','PingFang TC','Microsoft JhengHei',sans-serif;
+    color:var(--ink); background-color:var(--paper);
+    background-image:
+      linear-gradient(rgba(59,51,85,.06) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(59,51,85,.06) 1px,transparent 1px);
+    background-size:24px 24px; line-height:1.6; font-size:17px; overflow-x:hidden;
+  }
+  .latin{font-family:'Patrick Hand','LXGW WenKai TC',sans-serif}
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 16px 60px}
+
+  /* header */
+  header{text-align:center;position:relative;margin-bottom:28px}
+  .tape-title{
+    display:inline-block;background:var(--pink);padding:8px 26px;font-size:clamp(26px,5vw,40px);
+    font-weight:700;transform:rotate(-2deg);box-shadow:3px 3px 0 var(--ink);border:2.5px solid var(--ink);
+    border-radius:var(--wobble);
+  }
+  .sub{margin-top:14px;color:var(--soft);font-size:18px}
+  .plane{position:absolute;top:-6px;right:4%;width:70px;animation:fly 4s ease-in-out infinite}
+  .flag{position:absolute;top:6px;left:4%;width:56px;transform:rotate(-8deg)}
+  @media(max-width:600px){header{padding-top:34px}.plane{width:48px;top:-4px;right:2px}.flag{width:38px;top:-2px;left:4px}}
+  @keyframes fly{0%,100%{transform:translate(0,0) rotate(-6deg)}50%{transform:translate(-8px,-10px) rotate(4deg)}}
+
+  /* cards */
+  .card{
+    background:var(--card);border:2.5px solid var(--ink);border-radius:var(--wobble);
+    padding:22px 20px 20px;position:relative;box-shadow:4px 5px 0 rgba(59,51,85,.85);
+    transition:transform .25s;
+  }
+  .card:nth-child(even){border-radius:var(--wobble2)}
+  .card:hover{transform:rotate(-.4deg)}
+  .card.fr h2{position:absolute;top:-16px;left:20px;margin:0}
+  .card h2{
+    display:inline-block;font-size:21px;padding:2px 16px;margin:-38px 0 12px -4px;
+    background:var(--mustard);border:2px dashed var(--ink);transform:rotate(-1.5deg);
+  }
+  .card.blue h2{background:var(--blue)} .card.pink h2{background:var(--pink)} .card.mint h2{background:var(--mint)}
+  .grid{display:grid;gap:40px 26px;margin-top:40px}
+  .g2{grid-template-columns:1fr 1fr}
+  @media(max-width:760px){.g2{grid-template-columns:1fr}}
+  .hint{color:var(--soft);font-size:15px}
+
+  /* countdown */
+  .cd{text-align:center;padding-top:28px}
+  .cd-label{font-size:19px}
+  .cd-label b{background:linear-gradient(transparent 55%,var(--mustard) 55%)}
+  .cd-boxes{display:flex;justify-content:center;gap:12px;margin:16px 0 8px;flex-wrap:wrap}
+  .cd-box{
+    min-width:92px;padding:10px 8px 4px;border:2.5px solid var(--ink);border-radius:var(--wobble2);
+    background:#fff;box-shadow:3px 3px 0 var(--ink);
+  }
+  .cd-box:nth-child(1){background:var(--blue)} .cd-box:nth-child(2){background:#fff}
+  .cd-box:nth-child(3){background:var(--pink)} .cd-box:nth-child(4){background:var(--mustard)}
+  .cd-num{font-family:'Patrick Hand',sans-serif;font-size:clamp(40px,9vw,64px);line-height:1}
+  .cd-unit{font-size:15px}
+  .gear{
+    position:absolute;top:12px;right:14px;background:none;border:2px solid var(--ink);border-radius:50%;
+    width:38px;height:38px;cursor:pointer;font-size:19px;color:var(--ink);background:#fff;
+  }
+  .gear:hover{background:var(--mustard)}
+  .setting{display:none;margin-top:12px;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .setting.show{display:flex}
+  .done-msg{font-family:'Patrick Hand',sans-serif;font-size:44px;margin:18px 0}
+
+  /* inputs & buttons */
+  input,button,select{font-family:inherit;font-size:16px;color:var(--ink)}
+  input{
+    border:2px solid var(--ink);border-radius:10px 14px 9px 13px;padding:7px 10px;background:#fff;min-width:0;
+  }
+  input:focus{outline:3px solid var(--blue)}
+  .btn{
+    border:2px solid var(--ink);background:var(--mustard);padding:6px 16px;cursor:pointer;
+    border-radius:var(--wobble2);box-shadow:2px 2px 0 var(--ink);transition:transform .1s;white-space:nowrap;
+  }
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+  .btn:active{transform:translate(2px,2px);box-shadow:none}
+  .btn.ghost{background:#fff}
+
+  /* timeline */
+  .tl{list-style:none;position:relative;padding-left:30px}
+  .tl::before{content:"";position:absolute;left:11px;top:6px;bottom:6px;border-left:3px dashed var(--ink)}
+  .tl li{position:relative;padding:6px 0 10px}
+  .tl li::before{
+    content:"";position:absolute;left:-27px;top:11px;width:16px;height:16px;border:2.5px solid var(--ink);
+    border-radius:50%;background:#fff;
+  }
+  .tl li.past{color:var(--soft);text-decoration:line-through}
+  .tl li.past::before{background:var(--soft)}
+  .tl li.next::before{background:var(--pink);width:20px;height:20px;left:-29px;top:9px}
+  .tl .date{font-family:'Patrick Hand',sans-serif;font-size:15px;color:var(--soft)}
+  .tag{
+    display:inline-block;font-size:13px;background:var(--pink);border:1.5px solid var(--ink);
+    padding:0 8px;border-radius:10px;margin-left:6px;text-decoration:none;color:var(--ink);
+  }
+
+  /* clocks */
+  .clocks{display:flex;justify-content:space-around;gap:10px;flex-wrap:wrap;text-align:center}
+  .clock svg{width:130px;height:130px}
+  .clock .place{font-size:18px;font-weight:700;margin-top:4px}
+  .clock .digi{font-family:'Patrick Hand',sans-serif;font-size:22px}
+  .clock .day{font-size:14px;color:var(--soft)}
+  .diff{text-align:center;margin-top:10px;font-size:15px;color:var(--soft)}
+
+  /* checklist */
+  .tabs{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .tab{
+    border:2px solid var(--ink);background:#fff;padding:5px 16px;cursor:pointer;border-radius:12px 12px 4px 4px;
+  }
+  .tab.active{background:var(--blue);font-weight:700}
+  .progress{height:20px;border:2px solid var(--ink);border-radius:12px;background:#fff;overflow:hidden;margin:4px 0 4px}
+  .progress div{
+    height:100%;width:0;transition:width .5s;
+    background:repeating-linear-gradient(45deg,var(--mint),var(--mint) 8px,#9fd8b8 8px,#9fd8b8 16px);
+  }
+  .prog-text{font-size:15px;color:var(--soft);text-align:right;margin-bottom:10px}
+  .checklist{list-style:none;max-height:340px;overflow-y:auto;padding-right:4px}
+  .checklist li{display:flex;align-items:center;gap:10px;padding:6px 2px;border-bottom:1.5px dashed rgba(59,51,85,.25)}
+  .checklist label{flex:1;cursor:pointer;display:flex;align-items:center;gap:10px;min-width:0;word-break:break-word}
+  .checklist input[type=checkbox]{
+    appearance:none;-webkit-appearance:none;width:22px;height:22px;min-width:22px;border:2.5px solid var(--ink);
+    border-radius:6px 8px 5px 7px;background:#fff;cursor:pointer;position:relative;padding:0;
+  }
+  .checklist input[type=checkbox]:checked{background:var(--mint);animation:pop .3s}
+  .checklist input[type=checkbox]:checked::after{
+    content:"✓";position:absolute;left:3px;top:-6px;font-size:20px;font-weight:700;color:var(--ink);
+  }
+  .checklist li.done label span{text-decoration:line-through;color:var(--soft)}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+  .del{background:none;border:none;cursor:pointer;font-size:18px;color:var(--soft);padding:0 4px}
+  .del:hover{color:#d0546f}
+  .addrow{display:flex;gap:8px;margin-top:12px}
+  .addrow input{flex:1}
+
+  /* french */
+  .fr{text-align:center;padding-top:26px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+  .fr .btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .fr-text{font-family:'Patrick Hand',sans-serif;font-size:clamp(26px,5vw,34px);line-height:1.3}
+  .fr-zh{font-size:20px;margin-top:6px}
+  .fr-use{
+    display:inline-block;margin:10px 0 14px;font-size:15px;background:var(--blue);
+    border:1.5px solid var(--ink);padding:1px 12px;border-radius:12px;
+  }
+
+  /* money */
+  .conv{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .conv .field{flex:1;min-width:120px}
+  .conv .field label{font-size:14px;color:var(--soft);display:block}
+  .conv .field input{width:100%;font-family:'Patrick Hand',sans-serif;font-size:22px}
+  .swap{font-size:24px;padding-top:16px}
+  .rate{margin:10px 0 18px;font-size:15px;color:var(--soft);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .rate input{width:90px;padding:3px 8px}
+  .exp-list{list-style:none;margin-top:10px;max-height:220px;overflow-y:auto}
+  .exp-list li{display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1.5px dashed rgba(59,51,85,.25)}
+  .exp-list .nm{flex:1;word-break:break-word}
+  .exp-list .amt{font-family:'Patrick Hand',sans-serif;font-size:19px}
+  .total{
+    margin-top:12px;padding:8px 12px;background:var(--mustard);border:2px solid var(--ink);
+    border-radius:var(--wobble);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-weight:700;
+  }
+  .total .latin{font-size:21px}
+  .exp-add{display:flex;gap:8px;flex-wrap:wrap}
+  .exp-add input:first-child{flex:2;min-width:120px} .exp-add input:nth-child(2){flex:1;min-width:90px}
+  h3{font-size:18px;margin:6px 0 8px}
+
+  /* reports */
+  .reports{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;margin-top:8px}
+  .rep{
+    display:block;text-decoration:none;color:var(--ink);background:#fff;border:2px solid var(--ink);
+    padding:14px 14px 12px;border-radius:var(--wobble2);position:relative;box-shadow:3px 3px 0 var(--ink);
+    transition:transform .2s;
+  }
+  .rep:nth-child(3n+1){transform:rotate(-1.2deg);background:#FFF4F6}
+  .rep:nth-child(3n+2){transform:rotate(.8deg);background:#F2F7FF}
+  .rep:nth-child(3n){transform:rotate(-.4deg);background:#FFFBEA}
+  .rep:hover{transform:rotate(0) scale(1.04)}
+  .rep::before{
+    content:"";position:absolute;top:-10px;left:50%;width:60px;height:18px;margin-left:-30px;
+    background:rgba(246,215,118,.8);border:1px solid rgba(59,51,85,.3);transform:rotate(-3deg);
+  }
+  .rep .yr{font-family:'Patrick Hand',sans-serif;font-size:15px;color:var(--soft)}
+  .rep .who{font-weight:700;font-size:18px}
+  .rep .note{font-size:15px;margin-top:4px}
+  .rep .go{font-size:14px;margin-top:8px;color:var(--soft)}
+  .iep-links{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:26px}
+  .iep-links .btn{text-decoration:none;white-space:normal;text-align:center}
+
+  footer{text-align:center;margin-top:46px;color:var(--soft);font-size:15px}
+  .doodles{display:flex;justify-content:center;gap:18px;margin-bottom:8px}
+  .doodles svg{width:44px;height:44px}
+
+  /* confetti */
+  .confetti{position:fixed;top:-20px;width:10px;height:14px;z-index:99;pointer-events:none;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <!-- 手繪法國國旗 -->
+    <svg class="flag" viewBox="0 0 60 60" aria-hidden="true">
+      <path d="M8 6 L10 56" stroke="#3B3355" stroke-width="3" stroke-linecap="round"/>
+      <path d="M10 8 Q22 4 24 9 L25 33 Q15 30 11 34 Z" fill="#A8C8F0" stroke="#3B3355" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M24 9 Q32 13 39 8 L40 31 Q32 36 25 33 Z" fill="#fff" stroke="#3B3355" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M39 8 Q47 4 54 9 L54 32 Q47 28 40 31 Z" fill="#F7B5C4" stroke="#3B3355" stroke-width="2.2" stroke-linejoin="round"/>
+    </svg>
+    <h1 class="tape-title">Bon Voyage！第戎倒數小手帳</h1>
+    <p class="sub">台灣 ✈ 勃艮第商學院 BSB・2027 春季交換</p>
+    <!-- 手繪飛機 -->
+    <svg class="plane" viewBox="0 0 80 60" aria-hidden="true">
+      <path d="M6 34 Q30 30 62 22 Q74 19 75 24 Q75 29 64 32 L34 40 L20 54 L14 53 L22 41 L12 43 L8 49 L4 48 L6 40 Z"
+        fill="#fff" stroke="#3B3355" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M38 30 L26 14 L32 13 L50 27" fill="#F7B5C4" stroke="#3B3355" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="58" cy="26" r="2" fill="#3B3355"/><circle cx="51" cy="28" r="2" fill="#3B3355"/>
+    </svg>
+  </header>
+
+  <!-- 1. 出發倒數 -->
+  <section class="card blue cd" id="countdown">
+    <h2>出發倒數</h2>
+    <button class="gear" id="gearBtn" title="修改出發時間" aria-label="修改出發時間">⚙</button>
+    <div id="cdMain">
+      <p class="cd-label">距離 <b id="depLabel">2026/12/29</b> 飛去第戎還有</p>
+      <div class="cd-boxes">
+        <div class="cd-box"><div class="cd-num" id="cdD">0</div><div class="cd-unit">天</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdH">00</div><div class="cd-unit">時</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdM">00</div><div class="cd-unit">分</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdS">00</div><div class="cd-unit">秒</div></div>
+      </div>
+      <p class="hint" id="cdHint"></p>
+    </div>
+    <div id="cdDone" style="display:none">
+      <p class="done-msg">Bienvenue à Dijon！🥐</p>
+      <p>出發啦～好好享受在勃艮第的每一天！</p>
+    </div>
+    <div class="setting" id="setting">
+      <span>出發時間（台灣時間）</span>
+      <input type="datetime-local" id="depInput">
+      <button class="btn" id="saveDep">儲存</button>
+      <button class="btn ghost" id="resetDep">還原 12/29</button>
+    </div>
+  </section>
+
+  <div class="grid g2">
+    <!-- 3. 里程碑 -->
+    <section class="card pink">
+      <h2>里程碑時間軸</h2>
+      <ul class="tl" id="timeline"></ul>
+    </section>
+
+    <!-- 5. 雙時鐘 -->
+    <section class="card mint">
+      <h2>台灣 ⇄ 第戎</h2>
+      <div class="clocks">
+        <div class="clock">
+          <svg viewBox="0 0 130 130" id="clockTW"></svg>
+          <div class="place">🧋 台灣</div>
+          <div class="digi" id="digiTW">--:--</div>
+          <div class="day" id="dayTW"></div>
+        </div>
+        <div class="clock">
+          <svg viewBox="0 0 130 130" id="clockFR"></svg>
+          <div class="place">🥐 第戎</div>
+          <div class="digi" id="digiFR">--:--</div>
+          <div class="day" id="dayFR"></div>
+        </div>
+      </div>
+      <p class="diff" id="diffText"></p>
+    </section>
+  </div>
+
+  <div class="grid g2">
+    <!-- 2. 待辦清單 -->
+    <section class="card">
+      <h2>出發前清單</h2>
+      <div class="tabs">
+        <button class="tab active" data-tab="pre">📋 行前手續</button>
+        <button class="tab" data-tab="pack">🧳 行李清單</button>
+      </div>
+      <div class="progress"><div id="progBar"></div></div>
+      <p class="prog-text" id="progText"></p>
+      <ul class="checklist" id="checklist"></ul>
+      <div class="addrow">
+        <input id="newItem" placeholder="新增一項…" maxlength="60">
+        <button class="btn" id="addItem">加入</button>
+      </div>
+    </section>
+
+    <!-- 4. 每日法文 -->
+    <section class="card blue fr">
+      <h2>每日一句法文</h2>
+      <p class="hint" id="frDate"></p>
+      <p class="fr-text" id="frText"></p>
+      <p class="fr-zh" id="frZh"></p>
+      <span class="fr-use" id="frUse"></span>
+      <div class="btns"><button class="btn" id="frNext">再一句 🎲</button>
+      <button class="btn ghost" id="frToday">回到今日</button></div>
+    </section>
+  </div>
+
+  <!-- 6. 換算 + 記帳 -->
+  <div class="grid">
+    <section class="card pink">
+      <h2>台幣 ⇄ 歐元・行前記帳</h2>
+      <div class="grid g2" style="margin-top:0;gap:24px">
+        <div>
+          <h3>💱 匯率換算</h3>
+          <div class="conv">
+            <div class="field"><label>台幣 TWD</label><input type="number" id="twdIn" inputmode="decimal" placeholder="0"></div>
+            <div class="swap">⇄</div>
+            <div class="field"><label>歐元 EUR</label><input type="number" id="eurIn" inputmode="decimal" placeholder="0"></div>
+          </div>
+          <div class="rate">
+            1 歐元 ≈ <input type="number" id="rateIn" step="0.01"> 台幣
+            <span id="rateNote"></span>
+          </div>
+        </div>
+        <div>
+          <h3>🧾 行前花費</h3>
+          <div class="exp-add">
+            <input id="expName" placeholder="項目（如：機票）" maxlength="40">
+            <input id="expAmt" type="number" inputmode="decimal" placeholder="台幣">
+            <button class="btn" id="expAdd">記一筆</button>
+          </div>
+          <ul class="exp-list" id="expList"></ul>
+          <div class="total"><span>總花費</span><span class="latin" id="expTotal">NT$ 0</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 7. 心得通道 -->
+  <div class="grid">
+    <section class="card mint">
+      <h2>學長姐心得通道 📮</h2>
+      <p class="hint">政大學長姐在勃艮第商學院（BSB）的交換生活報告，點卡片會在新分頁打開。2025 年的兩篇連到 IEP 頁面，裡面有電子報和生活報告。</p>
+      <div class="reports" id="reports"></div>
+      <div class="iep-links"><a class="btn ghost" href="https://iep.nccu.edu.tw/outgoing/nid-2327/" target="_blank" rel="noopener">🏫 IEP 上的 BSB 學校介紹</a><a class="btn ghost" href="https://iep.nccu.edu.tw/outgoing/?s=%E5%8B%83%E8%89%AE%E7%AC%AC" target="_blank" rel="noopener">🔍 在 IEP 搜尋「勃艮第」看最新心得</a></div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="doodles" aria-hidden="true">
+      <!-- 可頌 -->
+      <svg viewBox="0 0 50 50"><path d="M6 32 Q10 14 25 12 Q40 14 44 32 Q38 36 33 30 Q30 38 25 38 Q20 38 17 30 Q12 36 6 32Z" fill="#F6D776" stroke="#3B3355" stroke-width="2.2" stroke-linejoin="round"/><path d="M17 30 Q19 20 22 14 M33 30 Q31 20 28 14" fill="none" stroke="#3B3355" stroke-width="1.8"/></svg>
+      <!-- 酒杯 -->
+      <svg viewBox="0 0 50 50"><path d="M15 6 L35 6 Q37 24 25 28 Q13 24 15 6Z" fill="#fff" stroke="#3B3355" stroke-width="2.2"/><path d="M16 15 L34 15 Q34 25 25 27 Q16 25 16 15Z" fill="#9B2D4A"/><path d="M25 28 L25 42 M17 44 Q25 41 33 44" stroke="#3B3355" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
+      <!-- 芥末罐 -->
+      <svg viewBox="0 0 50 50"><rect x="13" y="8" width="24" height="8" rx="2" fill="#F7B5C4" stroke="#3B3355" stroke-width="2.2"/><path d="M12 16 L38 16 L36 44 Q25 46 14 44Z" fill="#F6D776" stroke="#3B3355" stroke-width="2.2" stroke-linejoin="round"/><path d="M17 26 L33 26 L33 34 L17 34Z" fill="#fff" stroke="#3B3355" stroke-width="1.6"/><text x="25" y="32.5" font-size="6" text-anchor="middle" fill="#3B3355" font-family="Patrick Hand">DIJON</text></svg>
+    </div>
+    資料只存在這台裝置的瀏覽器裡・À bientôt！
+  </footer>
+</div>
+
+<script>
+/* ---------- 小工具 ---------- */
+const $ = id => document.getElementById(id);
+const store = {
+  get(k, fallback){ try{ const v = localStorage.getItem('dijon_'+k); return v===null ? fallback : JSON.parse(v); }catch(e){ return fallback; } },
+  set(k, v){ try{ localStorage.setItem('dijon_'+k, JSON.stringify(v)); }catch(e){} }
+};
+const pad = n => String(n).padStart(2,'0');
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+
+// 把台灣時間字串 "YYYY-MM-DDTHH:MM" 轉成 Date
+const twDate = s => new Date(s + ':00+08:00');
+const DEFAULT_DEP = '2026-12-29T00:00';
+
+/* ---------- 1. 出發倒數 ---------- */
+let depStr = store.get('departure', DEFAULT_DEP);
+let celebrated = false;
+
+function updateDepLabel(){
+  const d = depStr.split('T');
+  $('depLabel').textContent = d[0].replace(/-/g,'/') + (d[1] !== '00:00' ? ' ' + d[1] : '');
+}
+function tickCountdown(){
+  const diff = twDate(depStr) - new Date();
+  if (diff <= 0){
+    $('cdMain').style.display = 'none';
+    $('cdDone').style.display = 'block';
+    if(!celebrated){ celebrated = true; confetti(); }
+    return;
+  }
+  $('cdMain').style.display = 'block';
+  $('cdDone').style.display = 'none';
+  celebrated = false;
+  const s = Math.floor(diff/1000);
+  $('cdD').textContent = Math.floor(s/86400);
+  $('cdH').textContent = pad(Math.floor(s%86400/3600));
+  $('cdM').textContent = pad(Math.floor(s%3600/60));
+  $('cdS').textContent = pad(s%60);
+  const weeks = Math.floor(s/86400/7);
+  $('cdHint').textContent = weeks >= 1 ? `大約還有 ${weeks} 個禮拜，慢慢準備就來得及 ✿` : '倒數最後一週，記得再檢查一次護照和行李！';
+}
+$('gearBtn').onclick = () => { $('depInput').value = depStr; $('setting').classList.toggle('show'); };
+$('saveDep').onclick = () => {
+  if(!$('depInput').value) return;
+  depStr = $('depInput').value; store.set('departure', depStr);
+  updateDepLabel(); renderTimeline(); tickCountdown(); $('setting').classList.remove('show');
+};
+$('resetDep').onclick = () => { $('depInput').value = DEFAULT_DEP; };
+
+function confetti(){
+  const colors = ['#A8C8F0','#F7B5C4','#F6D776','#BFE6CF','#ffffff'];
+  for(let i=0;i<80;i++){
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random()*100 + 'vw';
+    c.style.background = colors[i%colors.length];
+    c.style.border = '1px solid #3B3355';
+    c.style.animationDuration = (2.5 + Math.random()*2.5) + 's';
+    c.style.animationDelay = Math.random()*1.5 + 's';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(), 6500);
+  }
+}
+
+/* ---------- 3. 里程碑 ---------- */
+function milestones(){
+  return [
+    {name:'✈ 出發去第戎', date: depStr},
+    {name:'🏫 BSB 開學', date:'2027-01-04T00:00'},
+    {name:'📚 交換結束', date:'2027-04-23T00:00'},
+    {name:'🏠 回到台灣', date:'2027-05-27T00:00'},
+    {name:'🎓 政大畢業', date:'2027-06-30T00:00', note:'日期待定'}
+  ];
+}
+function renderTimeline(){
+  const now = new Date(), ul = $('timeline');
+  ul.innerHTML = '';
+  let nextFound = false;
+  milestones().forEach(m => {
+    const d = twDate(m.date), li = document.createElement('li');
+    const days = Math.floor((d - now)/86400000);
+    const name = document.createElement('div'); name.textContent = m.name;
+    const date = document.createElement('div'); date.className = 'date';
+    date.textContent = m.date.slice(0,10).replace(/-/g,'/') + (m.note ? `（${m.note}）` : '');
+    if (d <= now) li.className = 'past';
+    else if (!nextFound){
+      nextFound = true; li.className = 'next';
+      const t = document.createElement('span'); t.className = 'tag'; t.textContent = `下一站・剩 ${days} 天`;
+      name.appendChild(t);
+    } else {
+      const t = document.createElement('span'); t.className = 'tag'; t.style.background = '#fff';
+      t.textContent = `${days} 天後`; name.appendChild(t);
+    }
+    li.append(name, date); ul.appendChild(li);
+  });
+}
+
+/* ---------- 5. 雙時鐘 ---------- */
+function buildClockFace(svg, color){
+  let marks = '';
+  for(let i=0;i<12;i++){
+    const a = i*30*Math.PI/180, r1 = i%3===0 ? 46 : 50, r2 = 55;
+    marks += `<line x1="${65+r1*Math.sin(a)}" y1="${65-r1*Math.cos(a)}" x2="${65+r2*Math.sin(a)}" y2="${65-r2*Math.cos(a)}" stroke="#3B3355" stroke-width="${i%3===0?3:2}" stroke-linecap="round"/>`;
+  }
+  svg.innerHTML = `
+    <path d="M65 4 Q100 3 120 30 Q131 62 118 96 Q98 127 63 126 Q28 126 10 98 Q-2 64 12 32 Q30 5 65 4Z" fill="${color}" stroke="#3B3355" stroke-width="3"/>
+    <circle cx="65" cy="65" r="52" fill="#fff" stroke="#3B3355" stroke-width="1.5" stroke-dasharray="4 4"/>
+    ${marks}
+    <line class="h" x1="65" y1="65" x2="65" y2="38" stroke="#3B3355" stroke-width="5" stroke-linecap="round"/>
+    <line class="m" x1="65" y1="65" x2="65" y2="24" stroke="#3B3355" stroke-width="3.5" stroke-linecap="round"/>
+    <line class="s" x1="65" y1="72" x2="65" y2="20" stroke="#F7B5C4" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="65" cy="65" r="4.5" fill="#F6D776" stroke="#3B3355" stroke-width="2"/>`;
+}
+buildClockFace($('clockTW'), '#BFE6CF');
+buildClockFace($('clockFR'), '#A8C8F0');
+
+function partsIn(tz, date){
+  const f = new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'});
+  const o = {}; f.formatToParts(date).forEach(p => o[p.type] = p.value);
+  return {h:+o.hour%24, m:+o.minute, s:+o.second, y:o.year, mo:o.month, d:o.day, wd:o.weekday};
+}
+const WD = {Mon:'一',Tue:'二',Wed:'三',Thu:'四',Fri:'五',Sat:'六',Sun:'日'};
+function setClock(svg, p){
+  const rot = (cls, deg) => svg.querySelector(cls).setAttribute('transform', `rotate(${deg} 65 65)`);
+  rot('.h', (p.h%12)*30 + p.m*0.5);
+  rot('.m', p.m*6 + p.s*0.1);
+  rot('.s', p.s*6);
+}
+function tickClocks(){
+  const now = new Date();
+  const tw = partsIn('Asia/Taipei', now), fr = partsIn('Europe/Paris', now);
+  setClock($('clockTW'), tw); setClock($('clockFR'), fr);
+  $('digiTW').textContent = `${pad(tw.h)}:${pad(tw.m)}:${pad(tw.s)}`;
+  $('digiFR').textContent = `${pad(fr.h)}:${pad(fr.m)}:${pad(fr.s)}`;
+  $('dayTW').textContent = `${tw.mo}/${tw.d}（${WD[tw.wd]}）`;
+  $('dayFR').textContent = `${fr.mo}/${fr.d}（${WD[fr.wd]}）`;
+  let diff = tw.h - fr.h; if (tw.d !== fr.d) diff += 24;
+  diff = ((diff % 24) + 24) % 24;
+  const frH = fr.h;
+  let mood = frH < 7 ? '第戎還在睡覺 😴' : frH < 12 ? '第戎正在吃早餐 🥐' : frH < 14 ? '第戎午餐時間 🍷' : frH < 19 ? '第戎的下午 ☕' : '第戎的晚上 🌙';
+  $('diffText').textContent = `台灣比法國快 ${diff} 小時（${diff===6?'夏令時間':'冬令時間'}）・${mood}`;
+}
+
+/* ---------- 2. 待辦清單 ---------- */
+const DEFAULT_LISTS = {
+  pre: ['申請法國學生簽證（Campus France）','預約簽證面談','訂機票','購買海外保險','申請宿舍（Crous）','完成 BSB 選課','印出國選課申請表給系辦','申請國際學生證 ISIC','開通信用卡海外功能','換一些歐元現金','手機漫遊／歐洲 SIM 卡','確認 Wine Management 選課'],
+  pack: ['護照','簽證／入學許可正本','證件與文件影本','歐規轉接頭（C／E 型）','常備藥','冬季大衣','圍巾、手套、毛帽','保暖衣','好走的鞋','筆電與充電線','行動電源','小禮物（給室友／同學）','台灣零食（想家時用）','拖鞋','環保袋']
+};
+function loadLists(){
+  const saved = store.get('lists', null);
+  if (saved) return saved;
+  const l = {};
+  for (const k in DEFAULT_LISTS) l[k] = DEFAULT_LISTS[k].map(t => ({id:uid(), text:t, done:false}));
+  return l;
+}
+let lists = loadLists();
+let curTab = 'pre';
+
+function renderList(){
+  const ul = $('checklist'); ul.innerHTML = '';
+  const items = lists[curTab];
+  items.forEach(it => {
+    const li = document.createElement('li'); if (it.done) li.className = 'done';
+    const label = document.createElement('label');
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = it.done;
+    cb.onchange = () => { it.done = cb.checked; store.set('lists', lists); renderList(); };
+    const span = document.createElement('span'); span.textContent = it.text;
+    label.append(cb, span);
+    const del = document.createElement('button'); del.className = 'del'; del.textContent = '✕'; del.title = '刪除';
+    del.onclick = () => { lists[curTab] = items.filter(x => x.id !== it.id); store.set('lists', lists); renderList(); };
+    li.append(label, del); ul.appendChild(li);
+  });
+  const done = items.filter(i => i.done).length, total = items.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  $('progBar').style.width = pct + '%';
+  $('progText').textContent = total ? `完成 ${done} / ${total}（${pct}%）${pct===100?' 🎉 全部搞定！':''}` : '清單是空的，新增一項吧';
+}
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); curTab = b.dataset.tab; renderList();
+});
+function addItem(){
+  const v = $('newItem').value.trim(); if (!v) return;
+  lists[curTab].push({id:uid(), text:v, done:false});
+  store.set('lists', lists); $('newItem').value = ''; renderList();
+}
+$('addItem').onclick = addItem;
+$('newItem').onkeydown = e => { if (e.key === 'Enter') addItem(); };
+
+/* ---------- 4. 每日法文 ---------- */
+const PHRASES = [
+  ['Bonjour !','你好！（白天用）','走進任何店家先說這句，超重要'],
+  ['Bonsoir !','晚安／晚上好','傍晚之後打招呼'],
+  ['Merci beaucoup !','非常感謝！','任何時候都用得到'],
+  ['Excusez-moi.','不好意思。','問路、借過、叫店員'],
+  ['Je ne parle pas bien français.','我法文說得不好。','先講這句，對方通常會放慢'],
+  ['Vous parlez anglais ?','您會說英文嗎？','需要切換語言時'],
+  ['Je voudrais un croissant, s\'il vous plaît.','我想要一個可頌，麻煩了。','麵包店點餐'],
+  ['L\'addition, s\'il vous plaît.','麻煩買單。','餐廳結帳'],
+  ['C\'est combien ?','這個多少錢？','市集、商店'],
+  ['Où est la gare ?','火車站在哪裡？','問路（第戎火車站 Dijon-Ville）'],
+  ['Un billet pour Paris, s\'il vous plaît.','一張去巴黎的票，麻煩了。','買火車票'],
+  ['Je suis étudiante en échange.','我是交換學生（女性）。','自我介紹'],
+  ['Je viens de Taïwan.','我來自台灣。','自我介紹'],
+  ['Enchantée !','很高興認識你！（女性）','第一次見面'],
+  ['À demain !','明天見！','下課道別'],
+  ['À bientôt !','待會見／再會！','道別'],
+  ['Je ne comprends pas.','我聽不懂。','上課或對話卡住時'],
+  ['Pouvez-vous répéter, s\'il vous plaît ?','可以請您再說一次嗎？','沒聽清楚時'],
+  ['Où sont les toilettes ?','廁所在哪裡？','救命用'],
+  ['Une carafe d\'eau, s\'il vous plaît.','麻煩給我一壺水（免費）。','餐廳要免費自來水'],
+  ['Un verre de vin rouge, s\'il vous plaît.','一杯紅酒，麻煩了。','勃艮第必備 🍷'],
+  ['C\'est délicieux !','真好吃！','稱讚食物'],
+  ['Je suis allergique à…','我對…過敏。','點餐時說明'],
+  ['J\'ai besoin d\'aide.','我需要幫忙。','緊急時'],
+  ['Il fait froid aujourd\'hui !','今天好冷！','第戎冬天的開場白'],
+  ['Bon appétit !','祝用餐愉快！','開動前'],
+  ['Bonne journée !','祝你有美好的一天！','離開店家時'],
+  ['Bon week-end !','週末愉快！','週五道別'],
+  ['Je cherche la moutarde de Dijon.','我在找第戎芥末醬。','超市尋寶'],
+  ['Ça va ? — Ça va bien, merci !','你好嗎？——很好，謝謝！','日常寒暄'],
+  ['On y va !','我們走吧！','出發時的口頭禪 ✈']
+];
+function dayIndex(){
+  const p = partsIn('Asia/Taipei', new Date());
+  return Math.floor(Date.UTC(+p.y, +p.mo-1, +p.d) / 86400000);
+}
+let frIdx = dayIndex() % PHRASES.length;
+function showPhrase(i, isToday){
+  const [fr, zh, use] = PHRASES[i];
+  $('frText').textContent = fr; $('frZh').textContent = zh; $('frUse').textContent = use;
+  const p = partsIn('Asia/Taipei', new Date());
+  $('frDate').textContent = isToday ? `${p.y}/${p.mo}/${p.d} 的一句` : '隨機加碼一句';
+}
+$('frNext').onclick = () => {
+  let n; do { n = Math.floor(Math.random()*PHRASES.length); } while (n === frIdx);
+  frIdx = n; showPhrase(n, false);
+};
+$('frToday').onclick = () => { frIdx = dayIndex() % PHRASES.length; showPhrase(frIdx, true); };
+
+/* ---------- 6. 匯率 + 記帳 ---------- */
+let rate = store.get('rate', 35.5);
+$('rateIn').value = rate;
+let lastEdited = 'twd';
+function convert(){
+  if (lastEdited === 'twd'){
+    const v = parseFloat($('twdIn').value);
+    $('eurIn').value = isNaN(v) ? '' : (v / rate).toFixed(2);
+  } else {
+    const v = parseFloat($('eurIn').value);
+    $('twdIn').value = isNaN(v) ? '' : Math.round(v * rate);
+  }
+}
+$('twdIn').oninput = () => { lastEdited = 'twd'; convert(); };
+$('eurIn').oninput = () => { lastEdited = 'eur'; convert(); };
+$('rateIn').oninput = () => {
+  const v = parseFloat($('rateIn').value);
+  if (v > 0){ rate = v; store.set('rate', rate); $('rateNote').textContent = '（手動設定）'; convert(); renderExp(); }
+};
+fetch('https://open.er-api.com/v6/latest/EUR')
+  .then(r => r.json())
+  .then(d => {
+    if (d && d.rates && d.rates.TWD){
+      rate = Math.round(d.rates.TWD * 100) / 100;
+      $('rateIn').value = rate; store.set('rate', rate);
+      $('rateNote').textContent = '（即時匯率，可手動修改）';
+      convert(); renderExp();
+    }
+  })
+  .catch(() => { $('rateNote').textContent = '（抓不到即時匯率，用上次的數字，可手動修改）'; });
+
+let expenses = store.get('expenses', []);
+function renderExp(){
+  const ul = $('expList'); ul.innerHTML = '';
+  let total = 0;
+  expenses.forEach(e => {
+    total += e.twd;
+    const li = document.createElement('li');
+    const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = e.name;
+    const amt = document.createElement('span'); amt.className = 'amt'; amt.textContent = 'NT$ ' + e.twd.toLocaleString();
+    const del = document.createElement('button'); del.className = 'del'; del.textContent = '✕'; del.title = '刪除';
+    del.onclick = () => { expenses = expenses.filter(x => x.id !== e.id); store.set('expenses', expenses); renderExp(); };
+    li.append(nm, amt, del); ul.appendChild(li);
+  });
+  if (!expenses.length){
+    const li = document.createElement('li'); li.className = 'hint'; li.textContent = '還沒有紀錄～買了機票記得記一筆';
+    ul.appendChild(li);
+  }
+  $('expTotal').textContent = `NT$ ${total.toLocaleString()} ≈ € ${(total/rate).toFixed(0)}`;
+}
+function addExp(){
+  const name = $('expName').value.trim(), amt = parseFloat($('expAmt').value);
+  if (!name || isNaN(amt) || amt <= 0) return;
+  expenses.push({id:uid(), name, twd:Math.round(amt)});
+  store.set('expenses', expenses);
+  $('expName').value = ''; $('expAmt').value = ''; renderExp(); $('expName').focus();
+}
+$('expAdd').onclick = addExp;
+$('expAmt').onkeydown = e => { if (e.key === 'Enter') addExp(); };
+
+/* ---------- 7. 心得通道 ---------- */
+const REPORTS = [
+  {yr:'2025', who:'科智所', note:'最新一篇：電子報 4 篇＋生活報告', url:'https://iep.nccu.edu.tw/outgoing/nid-4569-2/'},
+  {yr:'2025', who:'金融系', note:'電子報 4 篇＋生活報告', url:'https://iep.nccu.edu.tw/outgoing/nid-4265-2/'},
+  {yr:'107-1 秋季', who:'企管所', note:'第戎生活步調、近郊芥末工廠與酒莊', url:'https://iep.nccu.edu.tw/outgoing/files/107363051_elife.pdf'},
+  {yr:'107 級', who:'交換生學習報告', note:'BSB 特色、第戎交通（輕軌、SNCF 火車）', url:'https://iep.nccu.edu.tw/outgoing/files/107363109_%E7%94%9F%E6%B4%BB%E5%A0%B1%E5%91%8A.pdf'},
+  {yr:'108 級', who:'大四・選 M1 學程', note:'選課規則、密集課與選修課、Crous Maret 宿舍', url:'https://iep.nccu.edu.tw/outgoing/files/108104055_elife.pdf'},
+  {yr:'108 級', who:'Wine Tourism 心得', note:'酒莊參訪、WSET 證照、春季限定課程', url:'https://iep.nccu.edu.tw/outgoing/files/108303034_elife.pdf'},
+  {yr:'108 級', who:'大四・Bachelor 或 Master', note:'BSB 歷史與葡萄酒 program 介紹', url:'https://iep.nccu.edu.tw/outgoing/files/108306035_elife.pdf'},
+  {yr:'109 級', who:'金融四', note:'Crous 宿舍選擇與月租、校園生活', url:'https://iep.nccu.edu.tw/outgoing/files/109302045_elife_0.pdf'},
+  {yr:'111 級', who:'碩士・M1 課程', note:'點名、Hello BSB App、碩士生也可能上 Wine Management', url:'https://iep.nccu.edu.tw/outgoing/files/111353008_elife_0.pdf'},
+  {yr:'112 級', who:'碩士・MSc LMI', note:'Wine Management 選課爭議（寫信給助教前必看）', url:'https://iep.nccu.edu.tw/outgoing/files/112358012_life.pdf'}
+];
+REPORTS.forEach(r => {
+  const a = document.createElement('a');
+  a.className = 'rep'; a.href = r.url; a.target = '_blank'; a.rel = 'noopener';
+  a.innerHTML = `<div class="yr"></div><div class="who"></div><div class="note"></div><div class="go">📄 打開報告 →</div>`;
+  a.querySelector('.yr').textContent = r.yr;
+  a.querySelector('.who').textContent = r.who;
+  a.querySelector('.note').textContent = r.note;
+  $('reports').appendChild(a);
+});
+
+/* ---------- 啟動 ---------- */
+updateDepLabel(); renderTimeline(); renderList(); showPhrase(frIdx, true); renderExp();
+tickCountdown(); tickClocks();
+setInterval(() => { tickCountdown(); tickClocks(); }, 1000);
+setInterval(renderTimeline, 60000);
+</script>
+</body>
+</html>
