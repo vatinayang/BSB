@@ -196,13 +196,21 @@
   .rep:nth-child(3n+1){transform:rotate(-1.2deg);background:#FFF4F6}
   .rep:nth-child(3n+2){transform:rotate(.8deg);background:#F2F7FF}
   .rep:nth-child(3n){transform:rotate(-.4deg);background:#FFFBEA}
-  .rep:hover{transform:rotate(0) scale(1.04)}
+  .rep:hover{transform:rotate(0) scale(1.02)}
   .rep::before{
     content:"";position:absolute;top:-10px;left:50%;width:60px;height:18px;margin-left:-30px;
     background:rgba(246,215,118,.8);border:1px solid rgba(59,51,85,.3);transform:rotate(-3deg);
   }
+  .rep.extra{display:none}
+  .reports.show-all .rep.extra{display:block}
+  .rep-more{display:block;margin:20px auto 0}
   .rep .yr{font-family:'Patrick Hand',sans-serif;font-size:15px;color:var(--soft)}
-  .rep .who{font-weight:700;font-size:18px}
+  .rep .who{display:inline-block;font-weight:700;font-size:18px;color:var(--ink);text-decoration:none;border-bottom:2px dashed var(--pink)}
+  .rep .who:hover{background:var(--pink)}
+  .rep .pdfs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .rep .pdfs a{font-size:13px;text-decoration:none;color:var(--ink);background:#fff;border:1.5px solid var(--ink);border-radius:10px;padding:1px 8px}
+  .rep .pdfs a:hover{background:var(--mustard)}
+  .rep .pdfs a.life{background:var(--mint);font-weight:700}
   .rep .note{font-size:15px;margin-top:4px}
   .rep .go{font-size:14px;margin-top:8px;color:var(--soft)}
   .iep-links{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:26px}
@@ -361,9 +369,10 @@
   <div class="grid">
     <section class="card mint">
       <h2>學長姐心得通道 📮</h2>
-      <p class="hint">政大學長姐在勃艮第商學院（BSB）的交換生活報告，點卡片會在新分頁打開。2025 年的兩篇連到 IEP 頁面，裡面有電子報和生活報告。</p>
+      <p class="hint">政大 IEP「學生經驗分享」裡，學長姐在勃艮第商學院（BSB）的心得共 <b id="repCount">19</b> 篇，由新到舊排列。每篇都可以直接打開 4 份電子報和生活報告；點系所名稱會打開 IEP 上的心得頁。</p>
       <div class="reports" id="reports"></div>
-      <div class="iep-links"><a class="btn ghost" href="https://iep.nccu.edu.tw/outgoing/nid-2327/" target="_blank" rel="noopener">🏫 IEP 上的 BSB 學校介紹</a><a class="btn ghost" href="https://iep.nccu.edu.tw/outgoing/?s=%E5%8B%83%E8%89%AE%E7%AC%AC" target="_blank" rel="noopener">🔍 在 IEP 搜尋「勃艮第」看最新心得</a></div>
+      <button class="btn ghost rep-more" id="repToggle"></button>
+      <div class="iep-links"><a class="btn ghost" href="https://iep.nccu.edu.tw/outgoing/%e5%ad%b8%e7%94%9f%e7%b6%93%e9%a9%97%e5%88%86%e4%ba%ab/" target="_blank" rel="noopener">📚 IEP 學生經驗分享（全部學校）</a><a class="btn ghost" href="https://iep.nccu.edu.tw/outgoing/nid-2327/" target="_blank" rel="noopener">🏫 IEP 上的 BSB 學校介紹</a></div>
     </section>
   </div>
 
@@ -716,26 +725,49 @@ $('expAmt').onkeydown = e => { if (e.key === 'Enter') addExp(); };
 
 /* ---------- 7. 心得通道 ---------- */
 const REPORTS = [
-  {yr:'2025', who:'科智所', note:'最新一篇：電子報 4 篇＋生活報告', url:'https://iep.nccu.edu.tw/outgoing/nid-4569-2/'},
-  {yr:'2025', who:'金融系', note:'電子報 4 篇＋生活報告', url:'https://iep.nccu.edu.tw/outgoing/nid-4265-2/'},
-  {yr:'107-1 秋季', who:'企管所', note:'第戎生活步調、近郊芥末工廠與酒莊', url:'https://iep.nccu.edu.tw/outgoing/files/107363051_elife.pdf'},
-  {yr:'107 級', who:'交換生學習報告', note:'BSB 特色、第戎交通（輕軌、SNCF 火車）', url:'https://iep.nccu.edu.tw/outgoing/files/107363109_%E7%94%9F%E6%B4%BB%E5%A0%B1%E5%91%8A.pdf'},
-  {yr:'108 級', who:'大四・選 M1 學程', note:'選課規則、密集課與選修課、Crous Maret 宿舍', url:'https://iep.nccu.edu.tw/outgoing/files/108104055_elife.pdf'},
-  {yr:'108 級', who:'Wine Tourism 心得', note:'酒莊參訪、WSET 證照、春季限定課程', url:'https://iep.nccu.edu.tw/outgoing/files/108303034_elife.pdf'},
-  {yr:'108 級', who:'大四・Bachelor 或 Master', note:'BSB 歷史與葡萄酒 program 介紹', url:'https://iep.nccu.edu.tw/outgoing/files/108306035_elife.pdf'},
-  {yr:'109 級', who:'金融四', note:'Crous 宿舍選擇與月租、校園生活', url:'https://iep.nccu.edu.tw/outgoing/files/109302045_elife_0.pdf'},
-  {yr:'111 級', who:'碩士・M1 課程', note:'點名、Hello BSB App、碩士生也可能上 Wine Management', url:'https://iep.nccu.edu.tw/outgoing/files/111353008_elife_0.pdf'},
-  {yr:'112 級', who:'碩士・MSc LMI', note:'Wine Management 選課爭議（寫信給助教前必看）', url:'https://iep.nccu.edu.tw/outgoing/files/112358012_life.pdf'}
+  {yr:'2025', who:'科智所', note:'最新一篇', url:'https://iep.nccu.edu.tw/outgoing/nid-4569-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/112364118_ep1_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/112364118_ep2_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/112364118_ep3_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/112364118_ep4.pdf", "https://iep.nccu.edu.tw/outgoing/files/112364118_elife.pdf"]},
+  {yr:'2025', who:'金融系', note:'', url:'https://iep.nccu.edu.tw/outgoing/nid-4265-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/110302032%EF%BC%BFep1_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/110302032%EF%BC%BFep2_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/110302032%EF%BC%BFep3_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/110302032%EF%BC%BFep4_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/110302032%EF%BC%BFelife.pdf"]},
+  {yr:'2025', who:'風管所', note:'MSc 學程、Wine Management 選課爭議（寫信給助教前必看）', url:'https://iep.nccu.edu.tw/outgoing/nid-4180-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/112358012-ep1_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/112358012_ep2.pdf", "https://iep.nccu.edu.tw/outgoing/files/112358012_ep3.pdf", "https://iep.nccu.edu.tw/outgoing/files/112358012_ep4.pdf", "https://iep.nccu.edu.tw/outgoing/files/112358012_life.pdf"]},
+  {yr:'2024', who:'資管系', note:'', url:'https://iep.nccu.edu.tw/outgoing/nid-4132-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/112306077_ep1_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/112306077_ep2_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/112306077_ep3_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/112306077_ep4_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/112306077_elife.pdf"]},
+  {yr:'2024', who:'會計所', note:'M1 課程、點名、Hello BSB App', url:'https://iep.nccu.edu.tw/outgoing/nid-4085-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/111353008_ep1_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/111353008_ep2_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/111353008_ep3_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/111353008_ep4_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/111353008_elife_0.pdf"]},
+  {yr:'2024', who:'金融四', note:'Crous 宿舍選擇與月租、校園生活', url:'https://iep.nccu.edu.tw/outgoing/nid-3886-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/109302045_ep1_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/109302045_ep2_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/109302045_ep3_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/109302045_ep4_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/109302045_elife_0.pdf"]},
+  {yr:'2024', who:'企管系', note:'大四選 M1、密集課與選修課、Crous Maret', url:'https://iep.nccu.edu.tw/outgoing/nid-3817-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/108104055_ep1.pdf", "https://iep.nccu.edu.tw/outgoing/files/108104055_ep2.pdf", "https://iep.nccu.edu.tw/outgoing/files/108104055_ep3.pdf", "https://iep.nccu.edu.tw/outgoing/files/108104055_ep4.pdf", "https://iep.nccu.edu.tw/outgoing/files/108104055_elife.pdf"]},
+  {yr:'2023', who:'財管所', note:'', url:'https://iep.nccu.edu.tw/outgoing/nid-3646-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/109357003_ep1.pdf", "https://iep.nccu.edu.tw/outgoing/files/109357003_ep2.pdf", "https://iep.nccu.edu.tw/outgoing/files/109357003_ep3.pdf", "https://iep.nccu.edu.tw/outgoing/files/109357003_ep4.pdf", "https://iep.nccu.edu.tw/outgoing/files/109357003_elife.pdf"]},
+  {yr:'2023', who:'財管所', note:'必參加活動、法國常用 App、室內市集、旅遊花費', url:'https://iep.nccu.edu.tw/outgoing/nid-3602-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/-%E5%BF%85%E5%8F%83%E5%8A%A0%E6%B4%BB%E5%8B%95.pdf", "https://iep.nccu.edu.tw/outgoing/files/-%E6%B3%95%E5%9C%8B%E5%B8%B8%E7%94%A8APP.pdf", "https://iep.nccu.edu.tw/outgoing/files/-Dijon%E5%AE%A4%E5%85%A7%E5%B8%82%E9%9B%86.pdf", "https://iep.nccu.edu.tw/outgoing/files/-%E6%97%85%E9%81%8A%E8%8A%B1%E8%B2%BB.pdf", "https://iep.nccu.edu.tw/outgoing/files/pdf_18.pdf"]},
+  {yr:'2022', who:'資管系', note:'Bachelor 或 Master 怎麼選、葡萄酒 program', url:'https://iep.nccu.edu.tw/outgoing/nid-3413-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/108306035_ep1.pdf", "https://iep.nccu.edu.tw/outgoing/files/108306035_ep2.pdf", "https://iep.nccu.edu.tw/outgoing/files/108306035_ep3.pdf", "https://iep.nccu.edu.tw/outgoing/files/108306035_ep4.pdf", "https://iep.nccu.edu.tw/outgoing/files/108306035_elife.pdf"]},
+  {yr:'2022', who:'會計系', note:'Wine Tourism：酒莊參訪、WSET 證照', url:'https://iep.nccu.edu.tw/outgoing/nid-3363-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/108303034%CB%8Dep1.pdf", "https://iep.nccu.edu.tw/outgoing/files/108303034%CB%8Dep2.pdf", "https://iep.nccu.edu.tw/outgoing/files/108303034%CB%8Dep3.pdf", "https://iep.nccu.edu.tw/outgoing/files/108303034%CB%8Dep4.pdf", "https://iep.nccu.edu.tw/outgoing/files/108303034_elife.pdf"]},
+  {yr:'2022', who:'企管系', note:'', url:'https://iep.nccu.edu.tw/outgoing/nid-3247-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/wp-content/uploads/Epaper1.pdf", "https://iep.nccu.edu.tw/outgoing/wp-content/uploads/Epaper2.pdf", "https://iep.nccu.edu.tw/outgoing/wp-content/uploads/Epaper3.pdf", "https://iep.nccu.edu.tw/outgoing/files/Epaper4.pdf", "https://iep.nccu.edu.tw/outgoing/files/Dijon.pdf"]},
+  {yr:'2022', who:'企研所', note:'', url:'https://iep.nccu.edu.tw/outgoing/nid-3222-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/110363031_ep1.pdf.pdf", "https://iep.nccu.edu.tw/outgoing/files/110363031_ep2.pdf.pdf", "https://iep.nccu.edu.tw/outgoing/files/110363031_ep3.pdf.pdf", "https://iep.nccu.edu.tw/outgoing/files/110363031_ep4.pdf.pdf", "https://iep.nccu.edu.tw/outgoing/files/110363031_elife.pdf.pdf"]},
+  {yr:'2022', who:'科智所', note:'', url:'https://iep.nccu.edu.tw/outgoing/nid-3216-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/109364121_ep1_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/109364121_ep2_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/109364121_ep3_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/109364121_ep4_0.pdf", "https://iep.nccu.edu.tw/outgoing/files/109364121_elife_0.pdf"]},
+  {yr:'2022', who:'經濟系', note:'', url:'https://iep.nccu.edu.tw/outgoing/nid-3199-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/107102055_ep1.pdf", "https://iep.nccu.edu.tw/outgoing/files/107102055_ep2.pdf", "https://iep.nccu.edu.tw/outgoing/files/107102055_ep3.pdf", "https://iep.nccu.edu.tw/outgoing/files/107102055_ep4.pdf", "https://iep.nccu.edu.tw/outgoing/files/107102055_elife.pdf"]},
+  {yr:'2021', who:'企研所', note:'心態、行前準備、旅遊策略、課堂討論', url:'https://iep.nccu.edu.tw/outgoing/nid-2877-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/107363109_%E9%9B%BB%E5%AD%90%E5%A0%B1%E4%B8%80_%E5%BF%83%E6%85%8B.pdf", "https://iep.nccu.edu.tw/outgoing/files/107363109_%E9%9B%BB%E5%AD%90%E5%A0%B1%E4%BA%8C_%E8%A1%8C%E5%89%8D%E6%BA%96%E5%82%99.pdf", "https://iep.nccu.edu.tw/outgoing/files/107363109_%E9%9B%BB%E5%AD%90%E5%A0%B1%E4%B8%89_%E6%97%85%E9%81%8A%E7%AD%96%E7%95%A5.pdf", "https://iep.nccu.edu.tw/outgoing/files/107363109_%E9%9B%BB%E5%AD%90%E5%A0%B1%E5%9B%9B_%E8%AA%B2%E5%A0%82%E8%A8%8E%E8%AB%96.pdf", "https://iep.nccu.edu.tw/outgoing/files/107363109_%E7%94%9F%E6%B4%BB%E5%A0%B1%E5%91%8A.pdf"]},
+  {yr:'2020', who:'國貿所', note:'', url:'https://iep.nccu.edu.tw/outgoing/nid-2847-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/108351003_ep1.pdf", "https://iep.nccu.edu.tw/outgoing/files/108351003_ep2.pdf", "https://iep.nccu.edu.tw/outgoing/files/108351003_ep3.pdf", "https://iep.nccu.edu.tw/outgoing/files/108351003_ep4.pdf", "https://iep.nccu.edu.tw/outgoing/files/108351003_elife.pdf"]},
+  {yr:'2019', who:'企管系', note:'', url:'https://iep.nccu.edu.tw/outgoing/nid-2694-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/105305020_ep1.pdf", "https://iep.nccu.edu.tw/outgoing/files/105305020_ep2.pdf", "https://iep.nccu.edu.tw/outgoing/files/105305020_ep3.pdf", "https://iep.nccu.edu.tw/outgoing/files/105305020_ep4.pdf", "https://iep.nccu.edu.tw/outgoing/files/105305020_elife.pdf"]},
+  {yr:'2019', who:'企研所', note:'第戎生活步調、近郊芥末工廠與酒莊', url:'https://iep.nccu.edu.tw/outgoing/nid-2688-2/', pdfs:["https://iep.nccu.edu.tw/outgoing/files/107363051_ep1.pdf", "https://iep.nccu.edu.tw/outgoing/files/107363051_ep2.pdf", "https://iep.nccu.edu.tw/outgoing/files/107363051_ep3.pdf", "https://iep.nccu.edu.tw/outgoing/files/107363051_ep4.pdf", "https://iep.nccu.edu.tw/outgoing/files/107363051_elife.pdf"]}
 ];
-REPORTS.forEach(r => {
-  const a = document.createElement('a');
-  a.className = 'rep'; a.href = r.url; a.target = '_blank'; a.rel = 'noopener';
-  a.innerHTML = `<div class="yr"></div><div class="who"></div><div class="note"></div><div class="go">📄 打開報告 →</div>`;
-  a.querySelector('.yr').textContent = r.yr;
-  a.querySelector('.who').textContent = r.who;
-  a.querySelector('.note').textContent = r.note;
-  $('reports').appendChild(a);
+REPORTS.forEach((r, i) => {
+  const card = document.createElement('div');
+  card.className = 'rep' + (i >= 8 ? ' extra' : '');
+  const yr = document.createElement('div'); yr.className = 'yr'; yr.textContent = r.yr;
+  const who = document.createElement('a'); who.className = 'who'; who.href = r.url; who.target = '_blank'; who.rel = 'noopener';
+  who.textContent = r.who + ' ↗'; who.title = '打開 IEP 心得頁';
+  const note = document.createElement('div'); note.className = 'note'; note.textContent = r.note; if (!r.note) note.style.display = 'none';
+  const pdfs = document.createElement('div'); pdfs.className = 'pdfs';
+  ['電子報1','電子報2','電子報3','電子報4','生活報告'].forEach((label, k) => {
+    const a = document.createElement('a');
+    a.href = r.pdfs[k]; a.target = '_blank'; a.rel = 'noopener';
+    a.textContent = label; if (k === 4) a.className = 'life';
+    pdfs.appendChild(a);
+  });
+  card.append(yr, who, note, pdfs);
+  $('reports').appendChild(card);
 });
+$('repCount').textContent = REPORTS.length;
+$('repToggle').onclick = () => {
+  const open = $('reports').classList.toggle('show-all');
+  $('repToggle').textContent = open ? '收合 ▲' : `顯示全部 ${REPORTS.length} 篇 ▼`;
+};
+$('repToggle').textContent = `顯示全部 ${REPORTS.length} 篇 ▼`;
 
 /* ---------- 啟動 ---------- */
 updateDepLabel(); renderTimeline(); renderList(); showPhrase(frIdx, true); renderExp();
