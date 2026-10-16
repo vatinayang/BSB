@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bon Voyage！第戎倒數小手帳</title>
+<title>第戎交換倒數小手帳</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
@@ -39,6 +39,7 @@
   .flag{position:absolute;top:6px;left:4%;width:56px;transform:rotate(-8deg)}
   @media(max-width:600px){header{padding-top:34px}.plane{width:48px;top:-4px;right:2px}.flag{width:38px;top:-2px;left:4px}}
   @keyframes fly{0%,100%{transform:translate(0,0) rotate(-6deg)}50%{transform:translate(-8px,-10px) rotate(4deg)}}
+
 
   /* cards */
   .card{
@@ -152,6 +153,10 @@
 
   /* french */
   .fr{text-align:center;padding-top:26px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+  .fr .speak-row{margin-bottom:10px}
+  .btn.speak{background:var(--pink)}
+  .btn.ghost.speak{background:#fff}
+  .btn.speaking{animation:pop .5s infinite}
   .fr .btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
   .fr-text{font-family:'Patrick Hand',sans-serif;font-size:clamp(26px,5vw,34px);line-height:1.3}
   .fr-zh{font-size:20px;margin-top:6px}
@@ -223,7 +228,7 @@
       <path d="M24 9 Q32 13 39 8 L40 31 Q32 36 25 33 Z" fill="#fff" stroke="#3B3355" stroke-width="2.2" stroke-linejoin="round"/>
       <path d="M39 8 Q47 4 54 9 L54 32 Q47 28 40 31 Z" fill="#F7B5C4" stroke="#3B3355" stroke-width="2.2" stroke-linejoin="round"/>
     </svg>
-    <h1 class="tape-title">Bon Voyage！第戎倒數小手帳</h1>
+    <h1 class="tape-title">Bon Voyage！第戎交換倒數小手帳</h1>
     <p class="sub">台灣 ✈ 勃艮第商學院 BSB・2027 春季交換</p>
     <!-- 手繪飛機 -->
     <svg class="plane" viewBox="0 0 80 60" aria-hidden="true">
@@ -233,6 +238,8 @@
       <circle cx="58" cy="26" r="2" fill="#3B3355"/><circle cx="51" cy="28" r="2" fill="#3B3355"/>
     </svg>
   </header>
+
+
 
   <!-- 1. 出發倒數 -->
   <section class="card blue cd" id="countdown">
@@ -312,6 +319,8 @@
       <p class="fr-text" id="frText"></p>
       <p class="fr-zh" id="frZh"></p>
       <span class="fr-use" id="frUse"></span>
+      <div class="btns speak-row"><button class="btn speak" id="frSpeak">🔊 聽發音</button><button class="btn ghost speak" id="frSlow">🐢 慢速</button></div>
+      <p class="hint" id="frVoiceHint" style="display:none"></p>
       <div class="btns"><button class="btn" id="frNext">再一句 🎲</button>
       <button class="btn ghost" id="frToday">回到今日</button></div>
     </section>
@@ -610,6 +619,40 @@ $('frNext').onclick = () => {
   frIdx = n; showPhrase(n, false);
 };
 $('frToday').onclick = () => { frIdx = dayIndex() % PHRASES.length; showPhrase(frIdx, true); };
+
+/* 法文語音（瀏覽器內建朗讀，不需外部資源） */
+let frVoice = null;
+function pickVoice(){
+  if (!('speechSynthesis' in window)) return;
+  const vs = speechSynthesis.getVoices().filter(v => /^fr/i.test(v.lang));
+  frVoice = vs.find(v => /fr[-_]FR/i.test(v.lang)) || vs[0] || null;
+}
+if ('speechSynthesis' in window){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+} else {
+  $('frSpeak').disabled = $('frSlow').disabled = true;
+  $('frVoiceHint').style.display = 'block';
+  $('frVoiceHint').textContent = '這個瀏覽器不支援語音朗讀，建議用 Chrome、Edge 或 Safari 開啟';
+}
+function speakFr(rate, btn){
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const text = PHRASES[frIdx][0].replace(/[—…]/g, ' ');
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'fr-FR'; u.rate = rate;
+  if (frVoice) u.voice = frVoice;
+  u.onstart = () => btn.classList.add('speaking');
+  u.onend = u.onerror = () => btn.classList.remove('speaking');
+  speechSynthesis.speak(u);
+  if (!frVoice && speechSynthesis.getVoices().length){
+    $('frVoiceHint').style.display = 'block';
+    $('frVoiceHint').textContent = '這台裝置沒有法文語音，發音可能不準；可以到系統設定下載「法文」語音';
+  }
+}
+$('frSpeak').onclick = () => speakFr(0.9, $('frSpeak'));
+$('frSlow').onclick = () => speakFr(0.55, $('frSlow'));
+
 
 /* ---------- 6. 匯率 + 記帳 ---------- */
 let rate = store.get('rate', 35.5);
